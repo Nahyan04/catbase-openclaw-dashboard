@@ -1,4 +1,6 @@
 import { AGENT_ACCENTS, type AgentId } from "@/lib/theme";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 type Swatch = { label: string; hex: string };
 
@@ -84,6 +86,25 @@ export default function Home() {
             <SwatchBox key={s.label} hex={s.hex} label={s.label} />
           ))}
         </div>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-widest mb-4">
+          shadcn smoke test
+        </h2>
+        <div className="flex gap-3 mb-6">
+          <Button>Primary</Button>
+          <Button variant="outline">Outline</Button>
+        </div>
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>Warm Palette Card</CardTitle>
+            <CardDescription>shadcn/ui component with theme override</CardDescription>
+          </CardHeader>
+          <CardContent>
+            If this card has a parchment background and warm border, the override worked.
+          </CardContent>
+        </Card>
       </section>
     </main>
   );
