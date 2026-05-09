@@ -151,6 +151,19 @@
   --sidebar-ring: #a8c5a0;
 }
 
+@keyframes ticker-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.ticker-marquee {
+  animation: ticker-marquee 30s linear infinite;
+}
+
+.ticker-marquee:hover {
+  animation-play-state: paused;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { House } from "@/components/home/house";
+import { Ticker } from "@/components/home/ticker";
 import type { PresenceMap } from "@/lib/agents/presence";
 
 async function fetchPresence(): Promise<PresenceMap> {
@@ -31,6 +32,11 @@ export default function Home() {
 
       {/* Render house with live presence or idle skeleton while loading */}
       <House presence={data ?? {}} />
+
+      {/* Live agent status ticker */}
+      <div className="mt-6">
+        <Ticker />
+      </div>
     </div>
   );
 }
