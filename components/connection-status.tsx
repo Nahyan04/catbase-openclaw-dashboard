@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 type StatusResponse = {
   gateway: "connected" | "disconnected" | "no-credentials";
   workspace: "ok" | "missing";
-  workspacePath: string;
+  workspacePath?: string;
 };
 
 async function fetchStatus(): Promise<StatusResponse> {
@@ -15,7 +15,7 @@ async function fetchStatus(): Promise<StatusResponse> {
 }
 
 export function ConnectionStatus() {
-  const { data } = useQuery<StatusResponse>({
+  const { data, isError } = useQuery<StatusResponse>({
     queryKey: ["status"],
     queryFn: fetchStatus,
     refetchInterval: 10_000,
@@ -25,7 +25,10 @@ export function ConnectionStatus() {
   let dotColor: string;
   let label: string;
 
-  if (!data) {
+  if (isError && !data) {
+    dotColor = "var(--color-status-error)";
+    label = "Status check failed";
+  } else if (!data) {
     // Loading state — show neutral standby
     dotColor = "var(--color-status-standby)";
     label = "Connecting…";
