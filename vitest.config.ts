@@ -1,0 +1,22 @@
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./vitest.setup.ts"],
+  },
+  resolve: {
+    alias: {
+      // Replace the Next.js "server-only" guard with a no-op in test — vitest
+      // runs in Node, not in the Next.js bundler, so the real package throws.
+      "server-only": new URL(
+        "./test-utils/server-only-shim.ts",
+        import.meta.url,
+      ).pathname,
+      "@": new URL("./", import.meta.url).pathname,
+    },
+  },
+});
