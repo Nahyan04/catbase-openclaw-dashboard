@@ -1,8 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { House } from "@/components/home/house";
 import { Ticker } from "@/components/home/ticker";
+import { TeamPanel } from "@/components/home/team-panel";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@/components/ui/collapsible";
 import type { PresenceMap } from "@/lib/agents/presence";
 
 async function fetchPresence(): Promise<PresenceMap> {
@@ -12,6 +19,8 @@ async function fetchPresence(): Promise<PresenceMap> {
 }
 
 export default function Home() {
+  const [teamOpen, setTeamOpen] = useState(false);
+
   const { data, isError } = useQuery<PresenceMap>({
     queryKey: ["presence"],
     queryFn: fetchPresence,
@@ -36,6 +45,18 @@ export default function Home() {
       {/* Live agent status ticker */}
       <div className="mt-6">
         <Ticker />
+      </div>
+
+      {/* Team panel — collapsible disclosure */}
+      <div className="mt-4">
+        <Collapsible open={teamOpen} onOpenChange={setTeamOpen}>
+          <CollapsibleTrigger className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-muted hover:text-foreground">
+            {teamOpen ? "Hide team" : "Show team"}
+          </CollapsibleTrigger>
+          <CollapsibleContent keepMounted>
+            <TeamPanel presence={data ?? {}} />
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     </div>
   );
