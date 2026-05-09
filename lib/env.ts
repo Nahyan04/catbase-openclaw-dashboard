@@ -10,12 +10,11 @@ if (process.env.NEXT_PUBLIC_OPENCLAW_GATEWAY_TOKEN !== undefined) {
 }
 
 const schema = z.object({
-  OPENCLAW_GATEWAY_URL: z
-    .string()
-    .url()
-    .or(z.string().startsWith("ws")),
+  OPENCLAW_GATEWAY_URL: z.string().url(),
   OPENCLAW_GATEWAY_TOKEN: z.string().optional(),
+  // empty string is the "not configured" sentinel; downstream FS code degrades to empty workspace
   OPENCLAW_WORKSPACE: z.string().min(0),
+  // truthy values: "1". Empty/unset means stub mode is off. Used by lib/openclaw/client.ts (Task 1.6).
   OPENCLAW_STUB: z.string().optional(),
   DISCORD_WEBHOOK_URL: z.string().optional(),
   GOOGLE_CALENDAR_CREDENTIALS: z.string().optional(),

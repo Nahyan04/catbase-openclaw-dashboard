@@ -32,15 +32,12 @@ describe("lib/env", () => {
   it("returns undefined for optional vars when they are not set", async () => {
     vi.stubEnv("OPENCLAW_GATEWAY_URL", "ws://127.0.0.1:18789");
     vi.stubEnv("OPENCLAW_WORKSPACE", "/home/user/.openclaw/workspace");
-    // Ensure optional vars are absent
-    vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", undefined as unknown as string);
-    vi.stubEnv("DISCORD_WEBHOOK_URL", undefined as unknown as string);
-    vi.stubEnv("GITHUB_TOKEN", undefined as unknown as string);
-    vi.stubEnv("TWITTER_API_KEY", undefined as unknown as string);
-    vi.stubEnv(
-      "GOOGLE_CALENDAR_CREDENTIALS",
-      undefined as unknown as string,
-    );
+    // Ensure optional vars are absent (vitest 4 accepts string | undefined)
+    vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", undefined);
+    vi.stubEnv("DISCORD_WEBHOOK_URL", undefined);
+    vi.stubEnv("GITHUB_TOKEN", undefined);
+    vi.stubEnv("TWITTER_API_KEY", undefined);
+    vi.stubEnv("GOOGLE_CALENDAR_CREDENTIALS", undefined);
 
     const { env } = await import("@/lib/env");
 
@@ -52,11 +49,17 @@ describe("lib/env", () => {
   });
 
   it("uses the default gateway URL when OPENCLAW_GATEWAY_URL is not set", async () => {
-    vi.stubEnv("OPENCLAW_GATEWAY_URL", undefined as unknown as string);
+    vi.stubEnv("OPENCLAW_GATEWAY_URL", undefined);
     vi.stubEnv("OPENCLAW_WORKSPACE", "/some/path");
 
     const { env } = await import("@/lib/env");
 
     expect(env.OPENCLAW_GATEWAY_URL).toBe("ws://127.0.0.1:18789");
+  });
+
+  it("throws when OPENCLAW_GATEWAY_URL is not a valid URL", async () => {
+    vi.stubEnv("OPENCLAW_GATEWAY_URL", "not-a-url");
+    vi.stubEnv("OPENCLAW_WORKSPACE", "/tmp/ws");
+    await expect(import("@/lib/env")).rejects.toThrow();
   });
 });
