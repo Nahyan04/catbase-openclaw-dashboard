@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { House } from "@/components/home/house";
 import { Ticker } from "@/components/home/ticker";
 import { TeamPanel } from "@/components/home/team-panel";
@@ -11,6 +11,14 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import type { PresenceMap } from "@/lib/agents/presence";
+import { useEventSource } from "@/lib/hooks/use-event-source";
+
+const PRESENCE_EVENTS = new Set([
+  "agent:run-start",
+  "agent:run-end",
+  "session:open",
+  "session:close",
+]);
 
 async function fetchPresence(): Promise<PresenceMap> {
   const res = await fetch("/api/presence");
@@ -20,12 +28,21 @@ async function fetchPresence(): Promise<PresenceMap> {
 
 export default function Home() {
   const [teamOpen, setTeamOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data, isError } = useQuery<PresenceMap>({
     queryKey: ["presence"],
     queryFn: fetchPresence,
     refetchInterval: 10_000,
   });
+
+  const { lastEvent } = useEventSource("/api/events");
+
+  useEffect(() => {
+    if (lastEvent && PRESENCE_EVENTS.has(lastEvent.event)) {
+      void queryClient.invalidateQueries({ queryKey: ["presence"] });
+    }
+  }, [lastEvent, queryClient]);
 
   return (
     <div className="min-h-screen bg-bg-parchment px-8 py-10">
