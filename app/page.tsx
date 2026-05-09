@@ -2,15 +2,15 @@ import { AGENT_ACCENTS, type AgentId } from "@/lib/theme";
 
 type Swatch = { label: string; hex: string };
 
-function SwatchBox({ label, hex, className }: { label: string; hex: string; className?: string }) {
+function SwatchBox({ label, hex, sub }: { hex: string; label: string; sub?: string }) {
   return (
     <div className="flex flex-col items-start gap-1">
       <div
-        className={`w-16 h-16 rounded border border-border-warm ${className ?? ""}`}
-        style={className ? undefined : { backgroundColor: hex }}
+        className="w-16 h-16 rounded border border-border-warm"
+        style={{ backgroundColor: hex }}
       />
       <span className="text-xs text-text-secondary font-mono leading-tight">{label}</span>
-      <span className="text-xs text-text-muted font-mono">{hex}</span>
+      <span className="text-xs text-text-muted font-mono">{sub ?? hex}</span>
     </div>
   );
 }
@@ -31,6 +31,7 @@ function SwatchSection({ title, swatches }: { title: string; swatches: Swatch[] 
 }
 
 export default function Home() {
+  // mirrors --color-* tokens in app/globals.css
   const baseSwatches: Swatch[] = [
     { label: "bg-parchment", hex: "#faf7f2" },
     { label: "bg-sidebar", hex: "#f3ede3" },
@@ -39,18 +40,21 @@ export default function Home() {
     { label: "border-warm", hex: "#e8e0d4" },
   ];
 
+  // mirrors --color-* tokens in app/globals.css
   const accentSwatches: Swatch[] = [
     { label: "accent-sage", hex: "#a8c5a0" },
     { label: "accent-cyan", hex: "#7ec8d4" },
     { label: "accent-pink", hex: "#f2a7b8" },
   ];
 
+  // mirrors --color-* tokens in app/globals.css
   const textSwatches: Swatch[] = [
     { label: "text-primary", hex: "#3d3530" },
     { label: "text-secondary", hex: "#8c7e72" },
     { label: "text-muted", hex: "#b0a499" },
   ];
 
+  // mirrors --color-* tokens in app/globals.css
   const statusSwatches: Swatch[] = [
     { label: "status-active", hex: "#7ec8d4" },
     { label: "status-ok", hex: "#a8c5a0" },
@@ -77,14 +81,7 @@ export default function Home() {
         </h2>
         <div className="flex flex-wrap gap-4">
           {agentSwatches.map((s) => (
-            <div key={s.label} className="flex flex-col items-start gap-1">
-              <div
-                className="w-16 h-16 rounded border border-border-warm"
-                style={{ backgroundColor: s.hex }}
-              />
-              <span className="text-xs text-text-secondary font-mono leading-tight">{s.label}</span>
-              <span className="text-xs text-text-muted font-mono">{s.hex}</span>
-            </div>
+            <SwatchBox key={s.label} hex={s.hex} label={s.label} />
           ))}
         </div>
       </section>

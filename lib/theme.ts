@@ -1,4 +1,4 @@
-// These hex values match the --color-agent-* tokens defined in app/globals.css
+// AgentId values are CSS-token suffixes — they double as Tailwind utility-class fragments (e.g. `bg-agent-${id}`). Hex values mirror --color-agent-* in app/globals.css.
 
 export type AgentId =
   | "alyvis"
@@ -6,7 +6,7 @@ export type AgentId =
   | "nyssa"
   | "sonic"
   | "picasso"
-  | "dearDiary";
+  | "dear-diary";
 
 export const AGENT_ACCENTS: Record<AgentId, string> = {
   alyvis: "#9baabd",
@@ -14,5 +14,5 @@ export const AGENT_ACCENTS: Record<AgentId, string> = {
   nyssa: "#b8a0d4",
   sonic: "#f4a76a",
   picasso: "#f2a7b8",
-  dearDiary: "#e8c97a",
+  "dear-diary": "#e8c97a",
 };

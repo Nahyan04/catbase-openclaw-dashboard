@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* --background / --foreground retained for shadcn/ui compatibility (consumed in Task 0.3). Body uses --color-bg-parchment / --color-text-primary directly. */
 :root {
   --background: #faf7f2;
   --foreground: #3d3530;
