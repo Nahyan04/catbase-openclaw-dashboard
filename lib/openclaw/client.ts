@@ -25,11 +25,7 @@ export function getConnectionStatus(): "connected" | "disconnected" | "no-creden
  * Never throws to callers.
  */
 export async function getOpenClaw(): Promise<OpenClawClient | null> {
-  // stub mode wired in Task 1.6
-  if (env.OPENCLAW_STUB === "1") {
-    // Task 1.6 will replace this block with the stub factory.
-    return null;
-  }
+  // Stub mode (OPENCLAW_STUB=1) is wired in Task 1.6 — no-op until then.
 
   // Return the cached singleton if already connected.
   if (_client !== null) {
