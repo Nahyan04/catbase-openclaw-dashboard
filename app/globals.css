@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* --background / --foreground retained for shadcn/ui compatibility (consumed in Task 0.3). Body uses --color-bg-parchment / --color-text-primary directly. */
+/* :root defines shadcn surface tokens; @theme inline maps them and our warm-palette tokens to Tailwind utilities. Body in @layer base consumes --background / --foreground. */
 
 @theme inline {
   --color-background: var(--background);
@@ -37,6 +37,8 @@
   --color-agent-sonic: #f4a76a;
   --color-agent-picasso: #f2a7b8;
   --color-agent-dear-diary: #e8c97a;
+
+  /* shadcn/ui token bridges */
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -76,11 +78,6 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-body {
-  background: var(--color-bg-parchment);
-  color: var(--color-text-primary);
-}
-
 :root {
   /* warm palette overrides — Task 0.3 */
   --background: #faf7f2;        /* parchment */
@@ -102,11 +99,11 @@ body {
   --border: #e8e0d4;
   --input: #e8e0d4;
   --ring: #a8c5a0;              /* sage */
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --chart-1: #a8c5a0;  /* sage */
+  --chart-2: #7ec8d4;  /* cyan */
+  --chart-3: #f2a7b8;  /* pink */
+  --chart-4: #e8c97a;  /* dear-diary amber */
+  --chart-5: #c4956a;  /* ohara brown */
   --radius: 0.625rem;
   --sidebar: #f3ede3;
   --sidebar-foreground: #3d3530;
@@ -139,11 +136,11 @@ body {
   --border: #e8e0d4;
   --input: #e8e0d4;
   --ring: #a8c5a0;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --chart-1: #a8c5a0;  /* sage */
+  --chart-2: #7ec8d4;  /* cyan */
+  --chart-3: #f2a7b8;  /* pink */
+  --chart-4: #e8c97a;  /* dear-diary amber */
+  --chart-5: #c4956a;  /* ohara brown */
   --sidebar: #f3ede3;
   --sidebar-foreground: #3d3530;
   --sidebar-primary: #a8c5a0;
