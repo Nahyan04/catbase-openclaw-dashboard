@@ -1,8 +1,13 @@
+"use client";
+
+import { Kanban } from "@/components/work/kanban";
+
 export default function WorkPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-text-primary mb-4">Work</h1>
-      <p className="text-text-secondary">Task boards and schedules will live here.</p>
+    <div className="flex flex-col gap-6">
+      <h1 className="text-2xl font-semibold text-text-primary">Work</h1>
+      <Kanban />
+      {/* Calendar (Task 3.4) will be added as a tab or right-side panel */}
     </div>
   );
 }
