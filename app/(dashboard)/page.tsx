@@ -69,10 +69,8 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-bg-parchment px-8 py-10">
-      <h1 className="text-2xl font-bold text-text-primary mb-8 tracking-tight">
-        CATBASE — palette check
-      </h1>
+    <div className="min-h-screen bg-bg-parchment px-8 py-10">
+      <h1 className="text-2xl font-bold text-text-primary mb-8 tracking-tight">Home</h1>
       <SwatchSection title="Base" swatches={baseSwatches} />
       <SwatchSection title="Accents" swatches={accentSwatches} />
       <SwatchSection title="Text" swatches={textSwatches} />
@@ -106,6 +104,6 @@ export default function Home() {
           </CardContent>
         </Card>
       </section>
-    </main>
+    </div>
   );
 }
