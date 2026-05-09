@@ -110,4 +110,34 @@ describe("lib/openclaw/client", () => {
     expect(result).toBeNull();
     expect(getConnectionStatus()).toBe("disconnected");
   });
+
+  it("stub mode: returns non-null client and status 'connected' when OPENCLAW_STUB=1, even with no token", async () => {
+    vi.stubEnv("OPENCLAW_STUB", "1");
+    vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", undefined);
+    vi.resetModules();
+
+    const { getOpenClaw, getConnectionStatus, resetOpenClawClientForTests } =
+      await import("@/lib/openclaw/client");
+    resetOpenClawClientForTests();
+
+    const result = await getOpenClaw();
+
+    expect(result).not.toBeNull();
+    expect(getConnectionStatus()).toBe("connected");
+  });
+
+  it("stub mode: caches and returns the same client on repeated calls", async () => {
+    vi.stubEnv("OPENCLAW_STUB", "1");
+    vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", undefined);
+    vi.resetModules();
+
+    const { getOpenClaw, resetOpenClawClientForTests } =
+      await import("@/lib/openclaw/client");
+    resetOpenClawClientForTests();
+
+    const first = await getOpenClaw();
+    const second = await getOpenClaw();
+
+    expect(first).toBe(second);
+  });
 });

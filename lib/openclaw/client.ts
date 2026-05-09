@@ -1,6 +1,7 @@
 import "server-only";
 
 import { env } from "@/lib/env";
+import { createStubClient } from "@/lib/openclaw/stub";
 import type { OpenClawClient } from "@/lib/openclaw/types";
 
 let _client: OpenClawClient | null = null;
@@ -25,7 +26,13 @@ export function getConnectionStatus(): "connected" | "disconnected" | "no-creden
  * Never throws to callers.
  */
 export async function getOpenClaw(): Promise<OpenClawClient | null> {
-  // Stub mode (OPENCLAW_STUB=1) is wired in Task 1.6 — no-op until then.
+  // Stub mode: skip credentials check entirely and return a fixture-backed client.
+  if (env.OPENCLAW_STUB === "1") {
+    if (_client) return _client;
+    _client = createStubClient();
+    _status = "connected";
+    return _client;
+  }
 
   // Return the cached singleton if already connected.
   if (_client !== null) {

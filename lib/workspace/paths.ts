@@ -2,7 +2,10 @@ import "server-only";
 import path from "node:path";
 import { env } from "@/lib/env";
 
-const workspace = env.OPENCLAW_WORKSPACE;
+const workspace =
+  env.OPENCLAW_STUB === "1"
+    ? path.join(process.cwd(), "fixtures")
+    : env.OPENCLAW_WORKSPACE ?? "";
 const workspaceParent = workspace ? path.dirname(workspace) : "";
 
 export const paths = {

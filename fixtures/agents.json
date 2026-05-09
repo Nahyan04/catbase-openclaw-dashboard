@@ -1,0 +1,8 @@
+[
+  { "id": "alyvis", "name": "Alyvis", "model": "claude-opus-4-7", "schedule": "always-on" },
+  { "id": "ohara", "name": "Ohara", "model": "claude-sonnet-4-6", "schedule": "on-demand" },
+  { "id": "nyssa", "name": "NYSSA", "model": "claude-sonnet-4-6", "schedule": "daily 6am" },
+  { "id": "sonic", "name": "Sonic", "model": "claude-sonnet-4-6", "schedule": "daily 7am scan + on-demand deep" },
+  { "id": "picasso", "name": "Picasso", "model": "claude-sonnet-4-6", "schedule": "on-demand" },
+  { "id": "dear-diary", "name": "Dear Diary", "model": "claude-sonnet-4-6", "schedule": "daily 8am" }
+]
