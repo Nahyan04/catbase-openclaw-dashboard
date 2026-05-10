@@ -20,6 +20,9 @@ const schema = z.object({
   GOOGLE_CALENDAR_CREDENTIALS: z.string().optional(),
   GITHUB_TOKEN: z.string().optional(),
   TWITTER_API_KEY: z.string().optional(),
+  TWITTER_LIST_ID: z.string().optional(),
+  // Weekly USD spend that triggers the pink alert banner on the Finance screen.
+  SPEND_ALERT_USD_PER_WEEK: z.coerce.number().positive().default(50),
 });
 
 // Provide sensible defaults so that `next dev` works without a .env file.
@@ -35,6 +38,8 @@ const raw = {
   GOOGLE_CALENDAR_CREDENTIALS: process.env.GOOGLE_CALENDAR_CREDENTIALS,
   GITHUB_TOKEN: process.env.GITHUB_TOKEN,
   TWITTER_API_KEY: process.env.TWITTER_API_KEY,
+  TWITTER_LIST_ID: process.env.TWITTER_LIST_ID,
+  SPEND_ALERT_USD_PER_WEEK: process.env.SPEND_ALERT_USD_PER_WEEK ?? 50,
 };
 
 export const env = schema.parse(raw);
