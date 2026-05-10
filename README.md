@@ -66,6 +66,12 @@ Copy `.env.example` to `.env.local` and fill in the values that apply to your se
 
 ## Integrations
 
+### Twitter / X
+
+Set `TWITTER_API_KEY` (a v2 bearer token) and `TWITTER_LIST_ID` (the list to read). The adapter is **read-only** and exposes a digest endpoint at `GET /api/integrations/twitter/digest` ranked by like + 2× retweet count.
+
+**Divide of responsibilities:** when Sonic is running on the same host, it writes its SCAN-mode digest directly to `<workspace>/docs/sonic/scan-YYYY-MM-DD.md` and the dashboard reads the markdown. This adapter exists only as a fallback for hosts where Sonic is not running, so the same digest is not fetched twice.
+
 ### Discord
 
 Set `DISCORD_WEBHOOK_URL` to a Discord incoming webhook. A long-running subscriber starts at server boot (via `instrumentation.ts`) and posts an embed whenever an `agent:run-end` event arrives with status `failed`.
