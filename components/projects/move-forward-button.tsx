@@ -16,8 +16,8 @@ interface MoveForwardButtonProps {
  * Renders the "What moves this forward today?" CTA.
  *
  * The endpoint that backs this button (`/api/agents/alyvis/ask`) is
- * scheduled for Task 5.3 and does not exist yet, so the button is
- * disabled here. A tooltip explains the gating to the user.
+ * not implemented yet, so the button is disabled here and a tooltip
+ * explains the gating to the user.
  *
  * The trigger renders into a `<span>` rather than the disabled button
  * itself because disabled buttons swallow pointer events, which would
