@@ -35,152 +35,151 @@ interface RoomSceneProps {
 const VB_W = 128;
 const VB_H = 80;
 
-const FLOOR_Y = 52;
+// Floor line and key baselines. Items snap to these so nothing floats.
+const FLOOR_Y = 54;
+const DESK_TOP_Y = 44; // top edge of the desk surface — items sit with their bottom here
+const DESK_X = 76;
+const DESK_W = 48;
+const BED_X = 4;
+const BED_TOP_Y = 62; // top edge of the cat bed sprite on the floor
+
+interface PropPlacement {
+  rows: string[];
+  palette: Record<string, string>;
+  x: number;
+  y: number;
+}
 
 interface RoomConfig {
   wallTint: string;
   wallStripe: string;
   floor: string;
   floorDark: string;
-  props: Array<{ rows: string[]; palette: Record<string, string>; x: number; y: number }>;
-  catBedPosition: { x: number; y: number };
-  deskPosition: { x: number; y: number };
+  props: PropPlacement[];
 }
 
 function tint(hex: string, alphaHex: string): string {
   return hex + alphaHex;
 }
 
+// Place a sprite so its bottom row sits at `bottomY`.
+function onSurface(
+  rows: string[],
+  palette: Record<string, string>,
+  x: number,
+  bottomY: number,
+): PropPlacement {
+  return { rows, palette, x, y: bottomY - rows.length };
+}
+
 function buildRoom(agent: AgentInfo): RoomConfig {
   const accent = agent.accentColor;
-
-  const baseBed = { rows: CAT_BED, palette: CAT_BED_PALETTE };
-  const baseBowl = { rows: FOOD_BOWL, palette: FOOD_BOWL_PALETTE };
-
   const id = agent.id;
 
-  // common floor decor
-  const baseProps = (more: RoomConfig["props"]): RoomConfig["props"] => [
-    { rows: baseBed.rows, palette: baseBed.palette, x: 4, y: 60 },
-    { rows: baseBowl.rows, palette: baseBowl.palette, x: 32, y: 68 },
-    ...more,
-  ];
+  // shared: cat bed + food bowl on the floor
+  const bed: PropPlacement = { rows: CAT_BED, palette: CAT_BED_PALETTE, x: BED_X, y: BED_TOP_Y };
+  const bowl: PropPlacement = onSurface(FOOD_BOWL, FOOD_BOWL_PALETTE, 30, FLOOR_Y + 16);
 
-  const desk = { x: 76, y: 50 };
-  const bed = { x: 4, y: 60 };
+  const baseProps = (more: PropPlacement[]): PropPlacement[] => [bed, bowl, ...more];
+
+  const floors = { floor: "#d9b896", floorDark: "#b88e6a" };
+  const walls = { wallTint: tint(accent, "26"), wallStripe: tint(accent, "44") };
 
   if (id === "alyvis") {
     return {
-      wallTint: tint(accent, "26"),
-      wallStripe: tint(accent, "40"),
-      floor: "#d9b896",
-      floorDark: "#b88e6a",
+      ...walls, ...floors,
       props: baseProps([
-        { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 14, y: 8 },
-        { rows: ROUTER, palette: ROUTER_PALETTE, x: 50, y: 6 },
-        { rows: MONITOR, palette: MONITOR_PALETTE, x: 88, y: 28 },
-        { rows: MONITOR, palette: MONITOR_PALETTE, x: 104, y: 28 },
-        { rows: PAW_PRINT_LITE, palette: { P: "#3d35304d" }, x: 60, y: 70 },
+        // window high on the wall
+        { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 14, y: 6 },
+        // small router on the wall to the right of the window
+        { rows: ROUTER, palette: ROUTER_PALETTE, x: 44, y: 14 },
+        // dual monitors sitting on the desk surface
+        onSurface(MONITOR, MONITOR_PALETTE, DESK_X + 6, DESK_TOP_Y),
+        onSurface(MONITOR, MONITOR_PALETTE, DESK_X + 26, DESK_TOP_Y),
       ]),
-      catBedPosition: bed,
-      deskPosition: desk,
     };
   }
 
   if (id === "ohara") {
     return {
-      wallTint: tint(accent, "26"),
-      wallStripe: tint(accent, "44"),
-      floor: "#d9b896",
-      floorDark: "#b88e6a",
+      ...walls, ...floors,
       props: baseProps([
-        { rows: BOOKSHELF, palette: BOOKSHELF_PALETTE, x: 8, y: 8 },
-        { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 36, y: 12 },
-        { rows: PAPER_STACK, palette: PAPER_STACK_PALETTE, x: 96, y: 30 },
-        { rows: PLANT, palette: PLANT_PALETTE, x: 60, y: 42 },
-        { rows: YARN_BALL, palette: YARN_BALL_PALETTE, x: 24, y: 70 },
+        // bookshelf hung high on the wall to the left
+        { rows: BOOKSHELF, palette: BOOKSHELF_PALETTE, x: 4, y: 4 },
+        // window to the right of the shelf
+        { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 44, y: 10 },
+        // paper stack + plant sitting on the desk
+        onSurface(PAPER_STACK, PAPER_STACK_PALETTE, DESK_X + 4, DESK_TOP_Y),
+        onSurface(PLANT, PLANT_PALETTE, DESK_X + 22, DESK_TOP_Y),
+        // yarn ball on the floor
+        onSurface(YARN_BALL, YARN_BALL_PALETTE, 28, FLOOR_Y + 18),
       ]),
-      catBedPosition: bed,
-      deskPosition: desk,
     };
   }
 
   if (id === "nyssa") {
     return {
-      wallTint: tint(accent, "26"),
-      wallStripe: tint(accent, "44"),
-      floor: "#d9b896",
-      floorDark: "#b88e6a",
+      ...walls, ...floors,
       props: baseProps([
-        { rows: WINDOW_NIGHT, palette: WINDOW_NIGHT_PALETTE, x: 14, y: 8 },
-        { rows: COIN_STACK, palette: COIN_STACK_PALETTE, x: 44, y: 30 },
-        { rows: COIN_STACK, palette: COIN_STACK_PALETTE, x: 56, y: 32 },
-        { rows: CALCULATOR, palette: CALCULATOR_PALETTE, x: 80, y: 40 },
-        { rows: SCRATCH_POST, palette: SCRATCH_POST_PALETTE, x: 28, y: 38 },
+        // night sky window
+        { rows: WINDOW_NIGHT, palette: WINDOW_NIGHT_PALETTE, x: 14, y: 6 },
+        // scratch post standing on the floor on the left
+        onSurface(SCRATCH_POST, SCRATCH_POST_PALETTE, 50, FLOOR_Y + 22),
+        // coin stacks + calculator on the desk
+        onSurface(COIN_STACK, COIN_STACK_PALETTE, DESK_X + 4, DESK_TOP_Y),
+        onSurface(COIN_STACK, COIN_STACK_PALETTE, DESK_X + 16, DESK_TOP_Y),
+        onSurface(CALCULATOR, CALCULATOR_PALETTE, DESK_X + 30, DESK_TOP_Y),
       ]),
-      catBedPosition: bed,
-      deskPosition: desk,
     };
   }
 
   if (id === "sonic") {
     return {
-      wallTint: tint(accent, "26"),
-      wallStripe: tint(accent, "40"),
-      floor: "#d9b896",
-      floorDark: "#b88e6a",
+      ...walls, ...floors,
       props: baseProps([
         { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 14, y: 6 },
-        { rows: TELESCOPE, palette: TELESCOPE_PALETTE, x: 44, y: 14 },
-        { rows: NEWSPAPER, palette: NEWSPAPER_PALETTE, x: 80, y: 36 },
-        { rows: NEWSPAPER, palette: NEWSPAPER_PALETTE, x: 92, y: 38 },
-        { rows: FISH_TOY, palette: FISH_TOY_PALETTE, x: 24, y: 70 },
+        // telescope on the desk pointed up
+        onSurface(TELESCOPE, TELESCOPE_PALETTE, DESK_X + 4, DESK_TOP_Y),
+        // newspapers stacked next to it
+        onSurface(NEWSPAPER, NEWSPAPER_PALETTE, DESK_X + 20, DESK_TOP_Y),
+        onSurface(NEWSPAPER, NEWSPAPER_PALETTE, DESK_X + 32, DESK_TOP_Y),
+        // fish toy on the floor
+        onSurface(FISH_TOY, FISH_TOY_PALETTE, 26, FLOOR_Y + 18),
       ]),
-      catBedPosition: bed,
-      deskPosition: desk,
     };
   }
 
   if (id === "picasso") {
     return {
-      wallTint: tint(accent, "26"),
-      wallStripe: tint(accent, "44"),
-      floor: "#d9b896",
-      floorDark: "#b88e6a",
+      ...walls, ...floors,
       props: baseProps([
-        { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 14, y: 8 },
-        { rows: EASEL, palette: EASEL_PALETTE, x: 80, y: 30 },
-        { rows: PAINT_PALETTE, palette: PAINT_PALETTE_PALETTE, x: 56, y: 44 },
-        { rows: YARN_BALL, palette: YARN_BALL_PALETTE, x: 30, y: 70 },
+        { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 14, y: 6 },
+        // easel stands on the floor mid-room (between bed and desk)
+        onSurface(EASEL, EASEL_PALETTE, 50, FLOOR_Y + 24),
+        // paint palette sits on the desk
+        onSurface(PAINT_PALETTE, PAINT_PALETTE_PALETTE, DESK_X + 6, DESK_TOP_Y),
+        onSurface(PAPER_STACK, PAPER_STACK_PALETTE, DESK_X + 22, DESK_TOP_Y),
+        // yarn ball on the floor
+        onSurface(YARN_BALL, YARN_BALL_PALETTE, 28, FLOOR_Y + 18),
       ]),
-      catBedPosition: bed,
-      deskPosition: desk,
     };
   }
 
   // dear-diary
   return {
-    wallTint: tint(accent, "26"),
-    wallStripe: tint(accent, "44"),
-    floor: "#d9b896",
-    floorDark: "#b88e6a",
+    ...walls, ...floors,
     props: baseProps([
-      { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 14, y: 8 },
-      { rows: PLANT, palette: PLANT_PALETTE, x: 44, y: 32 },
-      { rows: PLANNER, palette: PLANNER_PALETTE, x: 84, y: 38 },
-      { rows: PENCIL, palette: PENCIL_PALETTE, x: 100, y: 50 },
-      { rows: FISH_TOY, palette: FISH_TOY_PALETTE, x: 28, y: 70 },
+      { rows: WINDOW_DAY, palette: WINDOW_DAY_PALETTE, x: 14, y: 6 },
+      // potted plant on the floor next to the bed
+      onSurface(PLANT, PLANT_PALETTE, 46, FLOOR_Y + 22),
+      // planner + pencil on the desk
+      onSurface(PLANNER, PLANNER_PALETTE, DESK_X + 4, DESK_TOP_Y),
+      onSurface(PENCIL, PENCIL_PALETTE, DESK_X + 22, DESK_TOP_Y),
+      // fish toy near the food bowl
+      onSurface(FISH_TOY, FISH_TOY_PALETTE, 24, FLOOR_Y + 18),
     ]),
-    catBedPosition: bed,
-    deskPosition: desk,
   };
 }
-
-const PAW_PRINT_LITE = [
-  ".PP.PP.",
-  ".PP.PP.",
-  ".......",
-];
 
 export function RoomScene({ agent, status, className }: RoomSceneProps) {
   const room = buildRoom(agent);
@@ -189,10 +188,11 @@ export function RoomScene({ agent, status, className }: RoomSceneProps) {
   const isSleeping = status === "idle";
   const isErroring = status === "error";
 
-  // Cat position: at desk (active/standby/error) or in bed (idle)
+  // Awake cat — sit on the floor in front of the desk, feet on FLOOR_Y.
+  // Sleeping cat — curled on top of the cat bed.
   const catPos = isSleeping
-    ? { x: room.catBedPosition.x + 2, y: room.catBedPosition.y - 14 }
-    : { x: room.deskPosition.x - 4, y: room.deskPosition.y - 22 };
+    ? { x: BED_X + 2, y: BED_TOP_Y - 14 } // sleep sprite visible rows 6-16; bottom lands on the bed
+    : { x: 44, y: FLOOR_Y - 23 }; // awake sprite paws at row 23 → feet on FLOOR_Y
 
   const bodyRows = isSleeping ? CAT_BODY_SLEEP : CAT_BODY_AWAKE;
 
@@ -204,7 +204,7 @@ export function RoomScene({ agent, status, className }: RoomSceneProps) {
       role="img"
       aria-label={`${agent.name}'s room — ${status}`}
     >
-      {/* Wall background */}
+      {/* Wall */}
       <rect x={0} y={0} width={VB_W} height={FLOOR_Y} fill={room.wallTint} />
 
       {/* Wallpaper stripes */}
@@ -220,16 +220,16 @@ export function RoomScene({ agent, status, className }: RoomSceneProps) {
         />
       ))}
 
-      {/* Wainscoting line where wall meets floor */}
+      {/* Wainscot line where wall meets floor */}
       <rect x={0} y={FLOOR_Y - 2} width={VB_W} height={1} fill="#3d3530" opacity={0.55} />
       <rect x={0} y={FLOOR_Y - 1} width={VB_W} height={1} fill="#ffffff" opacity={0.3} />
 
       {/* Floor */}
       <rect x={0} y={FLOOR_Y} width={VB_W} height={VB_H - FLOOR_Y} fill={room.floor} />
 
-      {/* Floorboards */}
+      {/* Floorboards (horizontal seams) */}
       {[FLOOR_Y + 6, FLOOR_Y + 14, FLOOR_Y + 22].map((y, i) => (
-        <rect key={`board-${i}`} x={0} y={y} width={VB_W} height={1} fill={room.floorDark} opacity={0.6} />
+        <rect key={`board-${i}`} x={0} y={y} width={VB_W} height={1} fill={room.floorDark} opacity={0.55} />
       ))}
 
       {/* Vertical floorboard divisions */}
@@ -237,11 +237,12 @@ export function RoomScene({ agent, status, className }: RoomSceneProps) {
         <rect key={`vb-${i}`} x={x} y={FLOOR_Y + 1} width={1} height={VB_H - FLOOR_Y - 2} fill={room.floorDark} opacity={0.4} />
       ))}
 
-      {/* Desk surface */}
-      <rect x={room.deskPosition.x - 2} y={room.deskPosition.y - 4} width={48} height={4} fill="#8a5a3a" />
-      <rect x={room.deskPosition.x - 2} y={room.deskPosition.y - 1} width={48} height={1} fill="#5a3d2e" />
-      <rect x={room.deskPosition.x} y={room.deskPosition.y} width={2} height={20} fill="#5a3d2e" />
-      <rect x={room.deskPosition.x + 42} y={room.deskPosition.y} width={2} height={20} fill="#5a3d2e" />
+      {/* Desk — surface + legs + apron */}
+      <rect x={DESK_X - 2} y={DESK_TOP_Y} width={DESK_W + 4} height={4} fill="#8a5a3a" />
+      <rect x={DESK_X - 2} y={DESK_TOP_Y + 3} width={DESK_W + 4} height={1} fill="#5a3d2e" />
+      <rect x={DESK_X - 2} y={DESK_TOP_Y + 4} width={DESK_W + 4} height={2} fill="#6d4630" />
+      <rect x={DESK_X} y={DESK_TOP_Y + 6} width={2} height={FLOOR_Y - (DESK_TOP_Y + 6)} fill="#5a3d2e" />
+      <rect x={DESK_X + DESK_W} y={DESK_TOP_Y + 6} width={2} height={FLOOR_Y - (DESK_TOP_Y + 6)} fill="#5a3d2e" />
 
       {/* Props */}
       {room.props.map((p, i) => (
