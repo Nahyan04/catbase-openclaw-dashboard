@@ -1,0 +1,96 @@
+[
+  {
+    "id": "run-alyvis-running-1",
+    "agentId": "alyvis",
+    "title": "Route incoming task queue",
+    "status": "running",
+    "priority": "high",
+    "createdAt": "2026-05-09T13:28:00Z",
+    "startedAt": "2026-05-09T13:29:00Z",
+    "tokensIn": 5200,
+    "tokensOut": 1800
+  },
+  {
+    "id": "run-alyvis-completed-1",
+    "agentId": "alyvis",
+    "title": "Morning crew briefing",
+    "status": "completed",
+    "priority": "normal",
+    "createdAt": "2026-05-09T09:00:00Z",
+    "startedAt": "2026-05-09T09:00:30Z",
+    "finishedAt": "2026-05-09T09:04:12Z",
+    "tokensIn": 8400,
+    "tokensOut": 3100
+  },
+  {
+    "id": "run-ohara-completed-1",
+    "agentId": "ohara",
+    "title": "File research artifacts to docs/",
+    "status": "completed",
+    "priority": "normal",
+    "createdAt": "2026-05-09T11:15:00Z",
+    "startedAt": "2026-05-09T11:15:20Z",
+    "finishedAt": "2026-05-09T11:22:45Z",
+    "tokensIn": 12300,
+    "tokensOut": 4200
+  },
+  {
+    "id": "run-nyssa-completed-1",
+    "agentId": "nyssa",
+    "title": "Daily spend report",
+    "status": "completed",
+    "priority": "normal",
+    "createdAt": "2026-05-09T06:02:00Z",
+    "startedAt": "2026-05-09T06:02:10Z",
+    "finishedAt": "2026-05-09T06:07:33Z",
+    "tokensIn": 3800,
+    "tokensOut": 1200
+  },
+  {
+    "id": "run-sonic-failed-1",
+    "agentId": "sonic",
+    "title": "Twitter/X SCAN — AI policy",
+    "status": "failed",
+    "priority": "normal",
+    "createdAt": "2026-05-09T11:30:00Z",
+    "startedAt": "2026-05-09T11:30:05Z",
+    "finishedAt": "2026-05-09T11:31:22Z",
+    "tokensIn": 4100,
+    "tokensOut": 900
+  },
+  {
+    "id": "run-picasso-completed-1",
+    "agentId": "picasso",
+    "title": "Launch deck draft — slides 1-8",
+    "status": "completed",
+    "priority": "normal",
+    "createdAt": "2026-05-09T10:00:00Z",
+    "startedAt": "2026-05-09T10:00:45Z",
+    "finishedAt": "2026-05-09T10:38:19Z",
+    "tokensIn": 14800,
+    "tokensOut": 4900
+  },
+  {
+    "id": "run-picasso-queued-1",
+    "agentId": "picasso",
+    "title": "Mission Control v1 visual mocks",
+    "status": "queued",
+    "priority": "normal",
+    "createdAt": "2026-05-09T13:30:00Z",
+    "scheduledFor": "2026-05-10T09:00:00Z",
+    "tokensIn": 0,
+    "tokensOut": 0
+  },
+  {
+    "id": "run-dear-diary-completed-1",
+    "agentId": "dear-diary",
+    "title": "Morning standup + calendar reshuffle",
+    "status": "completed",
+    "priority": "normal",
+    "createdAt": "2026-05-09T08:01:00Z",
+    "startedAt": "2026-05-09T08:01:30Z",
+    "finishedAt": "2026-05-09T08:09:55Z",
+    "tokensIn": 6700,
+    "tokensOut": 2300
+  }
+]
