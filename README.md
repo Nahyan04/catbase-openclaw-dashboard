@@ -1,6 +1,6 @@
 # CATBASE / Mission Control
 
-A locally-hosted Next.js dashboard that visualises the live state of an OpenClaw-managed AI agent crew. It runs on a Linux VPS alongside the OpenClaw instance and connects to the gateway over a local WebSocket.
+A locally-hosted Next.js dashboard that visualises the live state of an OpenClaw-managed agent crew. It runs on a Linux VPS alongside the OpenClaw instance and connects to the gateway over a local WebSocket.
 
 ---
 
@@ -55,10 +55,13 @@ All gateway credentials are **server-side only**. Never prefix them with `NEXT_P
 | `OPENCLAW_GATEWAY_TOKEN` | No | — | Auth token from `~/.openclaw/openclaw.json → gateway.auth.token` |
 | `OPENCLAW_WORKSPACE` | Yes | `""` (empty = not configured) | Absolute path to the OpenClaw workspace directory |
 | `OPENCLAW_STUB` | No | — | Set to `1` to enable stub/offline mode |
-| `DISCORD_WEBHOOK_URL` | No | — | Discord incoming webhook for notifications |
-| `GOOGLE_CALENDAR_CREDENTIALS` | No | — | JSON credentials for Google Calendar integration |
-| `GITHUB_TOKEN` | No | — | GitHub personal access token |
-| `TWITTER_API_KEY` | No | — | Twitter/X API key (read-only) |
+| `DISCORD_WEBHOOK_URL` | No | — | Discord incoming webhook for failed-run alerts |
+| `GOOGLE_CALENDAR_CREDENTIALS` | No | — | Service-account JSON (string) for Google Calendar |
+| `GOOGLE_CALENDAR_ID` | No | `primary` | Calendar to read/write |
+| `GITHUB_TOKEN` | No | — | GitHub personal access token (repo:read scope) |
+| `TWITTER_API_KEY` | No | — | Twitter/X v2 bearer token (read-only) |
+| `TWITTER_LIST_ID` | No | — | List ID to pull the daily digest from |
+| `SPEND_ALERT_USD_PER_WEEK` | No | `50` | Trailing-7-day spend that trips the Finance alert banner |
 
 Copy `.env.example` to `.env.local` and fill in the values that apply to your setup. The app degrades gracefully when optional integrations are absent, showing a "Connect" prompt in the relevant UI panel.
 
@@ -84,6 +87,16 @@ curl -X POST http://localhost:3000/api/integrations/discord/test
 
 A "Mission Control connected" embed should appear in the channel.
 
+### Google Calendar
+
+Set `GOOGLE_CALENDAR_CREDENTIALS` to a service-account JSON (the entire file contents as a single string) and optionally `GOOGLE_CALENDAR_ID` to point at a calendar other than `primary`. The calendar must be shared with the service account's email.
+
+GCal events are merged into the Work calendar via `lib/schedule/source.ts`. The same module exposes `createEvent()` for write-back from scheduled runs.
+
+### GitHub
+
+Set `GITHUB_TOKEN` (a personal access token with `repo:read`). Project front-matter can declare `github: "owner/repo"` and the project card will surface recent commit and open-issue counts. Activity is cached server-side for five minutes per repo.
+
 ---
 
 ## Available Scripts
@@ -94,8 +107,35 @@ A "Mission Control connected" embed should appear in the channel.
 | `npm run build` | Compile an optimised production build |
 | `npm start` | Start the production server (run `build` first) |
 | `npm run lint` | Run ESLint across the codebase |
+| `npm run typecheck` | Run `tsc --noEmit` |
 | `npm test` | Run the vitest test suite once |
 | `npm run test:watch` | Run vitest in watch mode |
+| `npm run test:security` | Run the boundary tests that assert no gateway token leaks into the client bundle (run `npm run build` first) |
+
+---
+
+## Project Layout
+
+```
+app/
+  (dashboard)/        — five top-level screens (home, work, projects, knowledge, finance)
+  api/                — server-only route handlers (gateway, workspace, integrations)
+components/
+  finance/            — spend chart, table, alert banner, ledger
+  home/               — visual office floor plan + agent sprites
+  knowledge/          — memory timeline, doc viewer, search
+  pixel/              — shared pixel-art primitives (frame, badge, page header)
+  projects/           — project cards (incl. GitHub activity badge)
+  work/               — kanban board + calendar
+lib/
+  finance/            — token spend aggregation + ledger reader
+  integrations/       — discord, gcal, github, twitter adapters (all degrade when env unset)
+  openclaw/           — SDK client wrapper, event multiplexer, stub
+  workspace/          — path resolver + safe filesystem helpers
+  agents/             — agent registry (id, breed, accent, default model)
+fixtures/             — synthetic data used by stub mode
+instrumentation.ts    — boots the failed-run → Discord subscriber
+```
 
 ---
 
