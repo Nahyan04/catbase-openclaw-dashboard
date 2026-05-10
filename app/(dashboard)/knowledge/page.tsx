@@ -1,8 +1,10 @@
+import { KnowledgeShell } from "@/components/knowledge/knowledge-shell";
+
 export default function KnowledgePage() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-text-primary mb-4">Knowledge</h1>
-      <p className="text-text-secondary">Memory files and documentation will live here.</p>
+    <div className="flex flex-col gap-6">
+      <h1 className="text-2xl font-semibold text-text-primary">Knowledge</h1>
+      <KnowledgeShell />
     </div>
   );
 }
