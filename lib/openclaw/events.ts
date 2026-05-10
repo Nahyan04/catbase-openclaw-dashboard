@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getOpenClaw, getConnectionStatus } from "@/lib/openclaw/client";
+import { subscribeMemoryEvents } from "@/lib/memory/watcher";
 
 /** Backoff delays in milliseconds, capped at the last entry. */
 const BACKOFF_MS = [1_000, 2_000, 5_000, 10_000, 30_000] as const;
@@ -31,6 +32,8 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
+type StreamEvent = { event: string; data: unknown; at: string };
+
 /**
  * Async generator that subscribes to gateway events via the OpenClaw SDK.
  *
@@ -43,9 +46,9 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
  * Reconnects with exponential backoff on iterator errors.
  * Ends cleanly when signal is aborted.
  */
-export async function* subscribeToGateway(
+async function* subscribeToGatewayOnly(
   signal?: AbortSignal,
-): AsyncGenerator<{ event: string; data: unknown; at: string }> {
+): AsyncGenerator<StreamEvent> {
   // Always emit gateway:opening first.
   yield { event: "gateway:opening", data: {}, at: now() };
 
@@ -127,4 +130,79 @@ export async function* subscribeToGateway(
       }
     }
   }
+}
+
+/**
+ * Merge multiple async iterators, yielding values as they arrive from any
+ * source. When an iterator completes (`done: true`) it is dropped; when all
+ * sources are done, the merger ends. On abort, both sources are returned.
+ */
+async function* mergeAsync<T>(
+  signal: AbortSignal | undefined,
+  ...iters: AsyncIterator<T>[]
+): AsyncGenerator<T> {
+  type Pending = { idx: number; res: IteratorResult<T> };
+  const pending = new Map<number, Promise<Pending>>();
+
+  for (let i = 0; i < iters.length; i++) {
+    pending.set(
+      i,
+      iters[i].next().then((res) => ({ idx: i, res })),
+    );
+  }
+
+  const onAbort = () => {
+    for (const it of iters) {
+      try {
+        it.return?.();
+      } catch {
+        // Swallow — best-effort cleanup.
+      }
+    }
+  };
+  signal?.addEventListener("abort", onAbort, { once: true });
+
+  try {
+    while (pending.size > 0) {
+      if (signal?.aborted) return;
+      const { idx, res } = await Promise.race(pending.values());
+      pending.delete(idx);
+      if (res.done) continue;
+      yield res.value;
+      if (signal?.aborted) return;
+      pending.set(
+        idx,
+        iters[idx].next().then((r) => ({ idx, res: r })),
+      );
+    }
+  } finally {
+    signal?.removeEventListener("abort", onAbort);
+    for (const it of iters) {
+      try {
+        it.return?.();
+      } catch {
+        // Swallow — best-effort cleanup.
+      }
+    }
+  }
+}
+
+/**
+ * Public unified event stream consumed by `/api/events`.
+ *
+ * Merges:
+ *   - gateway:* events from the OpenClaw SDK (via `subscribeToGatewayOnly`)
+ *   - workspace:* events from the chokidar memory watcher
+ *
+ * The `gateway:opening` event is guaranteed to fire first because the gateway
+ * generator yields it synchronously on its first `next()` call before any
+ * memory event can be emitted (memory events only fire on filesystem changes).
+ */
+export async function* subscribeToGateway(
+  signal?: AbortSignal,
+): AsyncGenerator<StreamEvent> {
+  const gatewayIter = subscribeToGatewayOnly(signal);
+  const memoryIter = subscribeMemoryEvents();
+
+  yield* mergeAsync<StreamEvent>(signal, gatewayIter, memoryIter);
 }
