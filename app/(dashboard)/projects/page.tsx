@@ -1,8 +1,10 @@
+import { ProjectsGrid } from "@/components/projects/projects-grid";
+
 export default function ProjectsPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-text-primary mb-4">Projects</h1>
-      <p className="text-text-secondary">Active projects and scaffolds will live here.</p>
+    <div className="flex flex-col gap-6">
+      <h1 className="text-2xl font-semibold text-text-primary">Projects</h1>
+      <ProjectsGrid />
     </div>
   );
 }
