@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AuthorChip } from "@/components/knowledge/author-chip";
 import { MoveForwardButton } from "./move-forward-button";
+import { GithubActivity } from "./github-activity";
 import type { ProjectEntry } from "@/lib/projects/loader";
 
 interface ProjectCardProps {
@@ -76,11 +77,7 @@ export function ProjectCard({ entry }: ProjectCardProps) {
           </Link>
         </div>
 
-        {entry.github ? (
-          <p className="text-xs text-text-muted font-mono">
-            github: {entry.github}
-          </p>
-        ) : null}
+        {entry.github ? <GithubActivity slug={entry.github} /> : null}
 
         <div className="pt-1">
           <MoveForwardButton projectId={entry.slug} />
