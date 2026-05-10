@@ -103,8 +103,12 @@ export const AGENTS: AgentInfo[] = [
   },
 ];
 
-export function getAgent(id: AgentId): AgentInfo | undefined {
-  return AGENTS.find((a) => a.id === id);
+const AGENTS_BY_ID: Record<string, AgentInfo> = Object.fromEntries(
+  AGENTS.map((a) => [a.id, a]),
+);
+
+export function getAgent(id: string): AgentInfo | undefined {
+  return AGENTS_BY_ID[id];
 }
 
 export type { AgentId };

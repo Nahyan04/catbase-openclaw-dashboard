@@ -5,37 +5,12 @@ import Fuse from "fuse.js";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DocViewer } from "./doc-viewer";
+import { AuthorChip } from "./author-chip";
 import type { DocEntry, DocsView } from "@/lib/docs/loader";
-import { getAgent } from "@/lib/agents/registry";
-import type { AgentId } from "@/lib/theme";
 
 interface DocsIndexProps {
   view: DocsView;
   query: string;
-}
-
-function AuthorChip({ author }: { author?: string }) {
-  if (!author) return null;
-  const agent = getAgent(author as AgentId);
-  if (agent) {
-    return (
-      <Badge
-        className="border-transparent text-text-primary"
-        style={{ backgroundColor: `${agent.accentColor}33` }}
-      >
-        <span
-          className="h-2 w-2 rounded-full mr-1"
-          style={{ backgroundColor: agent.accentColor }}
-        />
-        {agent.name}
-      </Badge>
-    );
-  }
-  return (
-    <Badge variant="outline" className="text-text-secondary">
-      {author}
-    </Badge>
-  );
 }
 
 export function DocsIndex({ view, query }: DocsIndexProps) {
@@ -82,7 +57,7 @@ export function DocsIndex({ view, query }: DocsIndexProps) {
           filtered.map((doc) => (
             <Card
               key={doc.path}
-              className="bg-bg-card hover:bg-bg-hover/50 transition-colors cursor-pointer"
+              className="bg-bg-card hover:bg-bg-hover/50 transition-colors"
             >
               <CardContent>
                 <button

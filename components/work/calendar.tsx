@@ -27,7 +27,7 @@ function buildQueryParams(from: Date, to: Date): string {
 }
 
 function EventChip({ event }: { event: ScheduleEvent }) {
-  const agent = getAgent(event.agentId as Parameters<typeof getAgent>[0]);
+  const agent = getAgent(event.agentId);
   const timeLabel = format(parseISO(event.when), "HH:mm");
 
   return (
@@ -174,7 +174,7 @@ function MonthlyView({ cursor, events }: MonthlyViewProps) {
               {dayEvents.length > 0 && (
                 <div className="flex flex-col gap-0.5">
                   {dayEvents.slice(0, 2).map((e) => {
-                    const agent = getAgent(e.agentId as Parameters<typeof getAgent>[0]);
+                    const agent = getAgent(e.agentId);
                     return (
                       <div
                         key={e.id}

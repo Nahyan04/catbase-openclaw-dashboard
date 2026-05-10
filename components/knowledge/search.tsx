@@ -1,5 +1,6 @@
 "use client";
 
+import { Search as SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface KnowledgeSearchProps {
@@ -18,15 +19,15 @@ export function KnowledgeSearch({
       <Input
         type="search"
         value={value}
-        onChange={(e) => onChange((e.target as HTMLInputElement).value)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="pl-8"
       />
       <span
         aria-hidden="true"
-        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted text-sm"
+        className="absolute left-2.5 top-1/2 -translate-y-1/2"
       >
-        ⌕
+        <SearchIcon className="size-4 text-text-muted" />
       </span>
     </div>
   );

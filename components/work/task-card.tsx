@@ -26,7 +26,7 @@ export function TaskCard({ task }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({ id: task.id });
 
-  const agent = getAgent(task.agentId as Parameters<typeof getAgent>[0]);
+  const agent = getAgent(task.agentId);
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),

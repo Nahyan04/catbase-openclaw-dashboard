@@ -29,9 +29,7 @@ export function KnowledgeShell() {
     queryFn: () => fetch("/api/docs").then((r) => r.json()),
   });
 
-  // Subscribe to SSE — invalidate the memory query when the watcher fires
-  // a "workspace:memory:changed" event. (Wired now; the watcher event is
-  // emitted by Task 4.4.)
+  // Refetch memory when the workspace watcher signals a change.
   const { lastEvent } = useEventSource("/api/events");
 
   useEffect(() => {
