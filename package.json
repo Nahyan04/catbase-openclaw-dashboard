@@ -22,6 +22,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "fuse.js": "^7.3.0",
+    "googleapis": "^171.4.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^1.14.0",
     "next": "16.2.6",

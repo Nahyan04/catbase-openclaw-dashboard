@@ -18,6 +18,8 @@ const schema = z.object({
   OPENCLAW_STUB: z.string().optional(),
   DISCORD_WEBHOOK_URL: z.string().optional(),
   GOOGLE_CALENDAR_CREDENTIALS: z.string().optional(),
+  // Calendar to read/write. Defaults to "primary" when unset.
+  GOOGLE_CALENDAR_ID: z.string().optional(),
   GITHUB_TOKEN: z.string().optional(),
   TWITTER_API_KEY: z.string().optional(),
   TWITTER_LIST_ID: z.string().optional(),
@@ -36,6 +38,7 @@ const raw = {
   OPENCLAW_STUB: process.env.OPENCLAW_STUB,
   DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
   GOOGLE_CALENDAR_CREDENTIALS: process.env.GOOGLE_CALENDAR_CREDENTIALS,
+  GOOGLE_CALENDAR_ID: process.env.GOOGLE_CALENDAR_ID,
   GITHUB_TOKEN: process.env.GITHUB_TOKEN,
   TWITTER_API_KEY: process.env.TWITTER_API_KEY,
   TWITTER_LIST_ID: process.env.TWITTER_LIST_ID,
