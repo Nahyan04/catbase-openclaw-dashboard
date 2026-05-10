@@ -37,8 +37,16 @@ export interface OpenClawRun {
   scheduledFor?: string;
   tokensIn?: number;
   tokensOut?: number;
+  model?: string;
   input?: unknown;
   output?: unknown;
+}
+
+export interface OpenClawAgentUsage {
+  agentId: string;
+  date: string; // YYYY-MM-DD
+  tokens: number;
+  costUsd: number;
 }
 
 export interface OpenClawArtifact {
@@ -65,6 +73,13 @@ export interface OpenClawClient {
     update(id: string, patch: Partial<Pick<OpenClawRun, "status" | "title">>): Promise<OpenClawRun>;
   };
   artifacts: { list(): Promise<OpenClawArtifact[]> };
+  /**
+   * Optional usage namespace. Not all SDK builds expose this; spend
+   * aggregation falls back to summing tokensIn/tokensOut on runs when absent.
+   */
+  usage?: {
+    byAgent(opts: { from: string; to: string }): Promise<OpenClawAgentUsage[]>;
+  };
   events(): AsyncIterable<OpenClawEvent>;
   connect(): Promise<void>;
   disconnect(): Promise<void>;
