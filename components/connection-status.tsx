@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { PixelDot } from "@/components/pixel/pixel-badge";
 
 type StatusResponse = {
   gateway: "connected" | "disconnected" | "no-credentials";
@@ -27,41 +28,34 @@ export function ConnectionStatus() {
 
   if (isError && !data) {
     dotColor = "var(--color-status-error)";
-    label = "Status check failed";
+    label = "FAULT";
   } else if (!data) {
-    // Loading state — show neutral standby
     dotColor = "var(--color-status-standby)";
-    label = "Connecting…";
+    label = "BOOTING";
   } else if (data.gateway === "connected" && data.workspace === "ok") {
     dotColor = "var(--color-status-active)";
-    label = "Connected";
+    label = "ONLINE";
   } else if (data.gateway === "no-credentials") {
     dotColor = "var(--color-status-standby)";
-    label = "No credentials";
+    label = "NO TOKEN";
   } else if (data.gateway !== "connected" && data.workspace !== "ok") {
     dotColor = "var(--color-status-error)";
-    label = "Disconnected";
+    label = "OFFLINE";
   } else if (data.gateway !== "connected") {
     dotColor = "var(--color-status-error)";
-    label = "Gateway disconnected";
+    label = "GW DOWN";
   } else {
     dotColor = "var(--color-status-error)";
-    label = "Workspace missing";
+    label = "NO WS";
   }
 
   return (
     <div
-      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1"
-      style={{ backgroundColor: "var(--color-bg-hover)" }}
+      className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#1a1612] text-[#f5e8d4]"
+      style={{ boxShadow: "inset 0 0 0 1px #3d3530" }}
     >
-      <span
-        className="inline-block w-2 h-2 rounded-full flex-shrink-0"
-        style={{ backgroundColor: dotColor }}
-      />
-      <span
-        className="font-mono leading-none"
-        style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}
-      >
+      <PixelDot color={dotColor} size={6} />
+      <span className="font-pixel text-[7px] uppercase tracking-widest leading-none">
         {label}
       </span>
     </div>

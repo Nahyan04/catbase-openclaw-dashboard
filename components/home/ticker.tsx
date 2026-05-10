@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNowStrict } from "date-fns";
 import { AGENTS } from "@/lib/agents/registry";
 import type { PresenceMap, AgentStatus } from "@/lib/agents/presence";
+import { PixelDot } from "@/components/pixel/pixel-badge";
 
 async function fetchPresence(): Promise<PresenceMap> {
   const res = await fetch("/api/presence");
@@ -12,17 +13,15 @@ async function fetchPresence(): Promise<PresenceMap> {
 }
 
 const STATUS_COLOR: Record<AgentStatus, string> = {
-  active: "#7ec8d4",   // cyan
-  idle: "#a8c5a0",     // sage
-  standby: "#d4cbbf",  // beige-grey
-  error: "#f2a7b8",    // pink
+  active: "#7ec8d4",
+  idle: "#a8c5a0",
+  standby: "#e8c97a",
+  error: "#f2a7b8",
 };
 
 function fmtRelative(iso: string, future = false): string {
   const date = new Date(iso);
   const dist = formatDistanceToNowStrict(date, { roundingMethod: "floor" });
-  // formatDistanceToNowStrict returns e.g. "2 minutes", "1 hour"
-  // Compress to "2m", "1h", "3d", etc.
   const compressed = dist
     .replace(/ seconds?/, "s")
     .replace(/ minutes?/, "m")
@@ -51,17 +50,18 @@ function buildTickerSegment(
   })();
 
   return (
-    <span key={agent.id} className="inline-flex items-center gap-1">
+    <span key={agent.id} className="inline-flex items-center gap-1.5 font-pixel-mono text-[14px]">
+      <PixelDot color={STATUS_COLOR[status]} size={6} />
       <span style={{ color: agent.accentColor }} className="font-semibold">
         {agent.name}
       </span>
-      <span>:</span>
-      <span style={{ color: STATUS_COLOR[status] }} className="font-semibold uppercase">
+      <span className="text-text-muted">::</span>
+      <span style={{ color: STATUS_COLOR[status] }} className="font-bold uppercase tracking-wider">
         {status}
       </span>
       {timePart && (
         <>
-          <span className="opacity-50 mx-0.5">·</span>
+          <span className="text-text-muted opacity-60">·</span>
           <span className="text-text-secondary">{timePart}</span>
         </>
       )}
@@ -77,8 +77,8 @@ export function Ticker() {
   });
 
   const separator = (
-    <span className="mx-4 opacity-40 select-none" aria-hidden="true">
-      ·
+    <span className="mx-4 text-text-muted opacity-60 font-pixel text-[8px] select-none" aria-hidden="true">
+      ◆
     </span>
   );
 
@@ -92,20 +92,27 @@ export function Ticker() {
           {i < segments.length - 1 && separator}
         </span>
       ))}
-      {/* trailing separator before second copy */}
-      <span className="mx-4 opacity-40 select-none" aria-hidden="true">·</span>
+      <span className="mx-4 text-text-muted opacity-60 font-pixel text-[8px] select-none" aria-hidden="true">◆</span>
     </span>
   );
 
   return (
     <div
-      className="overflow-hidden border-t border-border-warm bg-bg-card py-2 text-sm text-text-primary"
+      className="pixel-frame-tight scanlines bg-[#1a1612] py-2 text-[#f5e8d4] overflow-hidden"
+      style={{ ["--pixel-frame-color" as string]: "#3d3530" }}
       role="marquee"
       aria-label="Live agent status"
     >
-      <div className="ticker-marquee whitespace-nowrap inline-flex">
-        <span className="px-4">{tickerContent}</span>
-        <span className="px-4" aria-hidden="true">{tickerContent}</span>
+      <div className="flex items-center">
+        <span className="font-pixel text-[8px] uppercase tracking-widest px-3 py-1 bg-[#a8c5a0] text-[#1a1612] flex-shrink-0">
+          ● LIVE
+        </span>
+        <div className="overflow-hidden flex-1">
+          <div className="ticker-marquee whitespace-nowrap inline-flex">
+            <span className="px-4">{tickerContent}</span>
+            <span className="px-4" aria-hidden="true">{tickerContent}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

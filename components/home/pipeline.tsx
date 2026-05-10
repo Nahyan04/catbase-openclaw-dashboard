@@ -23,23 +23,33 @@ export function Pipeline() {
   ];
 
   return (
-    <div className="border-2 border-dashed border-border-warm rounded-lg p-4 text-center">
-      <div className="text-xs uppercase tracking-wider text-text-secondary mb-3">
-        CONTENT PIPELINE
+    <div
+      className="pixel-frame-tight bg-[#fff8ec] p-5"
+      style={{ ["--pixel-frame-color" as string]: "#3d3530" }}
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <span aria-hidden className="inline-block w-2 h-2 bg-[#a8c5a0]" />
+        <h3 className="font-pixel text-[10px] uppercase tracking-[0.25em] text-text-primary">
+          Content Pipeline
+        </h3>
+        <span className="ml-auto font-pixel-mono text-[12px] text-text-muted">{"// agent → file → agent"}</span>
       </div>
-      <div className="flex flex-col gap-2 items-center">
+      <ul className="flex flex-col gap-2">
         {rows.map((row, i) => (
-          <div key={i} className="text-sm text-text-primary">
-            <span className="font-medium">{row.left}</span>
-            <span className="text-text-muted mx-1">→</span>
-            <code className="bg-bg-hover px-1 rounded text-text-secondary text-xs">
+          <li
+            key={i}
+            className="flex items-center gap-2 text-sm flex-wrap font-mono"
+          >
+            <span className="font-semibold text-text-primary">{row.left}</span>
+            <span className="text-[#f4a76a] font-pixel text-[9px]">▶</span>
+            <code className="bg-[#3d3530] text-[#f5e8d4] px-1.5 py-0.5 font-pixel-mono text-[12px]">
               {row.file}
             </code>
-            <span className="text-text-muted mx-1">→</span>
-            <span>{row.right}</span>
-          </div>
+            <span className="text-[#f4a76a] font-pixel text-[9px]">▶</span>
+            <span className="text-text-secondary">{row.right}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

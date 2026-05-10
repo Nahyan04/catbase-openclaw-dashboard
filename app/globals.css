@@ -11,6 +11,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-pixel: var(--font-pixel);
+  --font-pixel-mono: var(--font-pixel-mono);
+
+  --color-pixel-shadow: #2a201a;
+  --color-pixel-line: #3d3530;
+  --color-pixel-floor: #d9b896;
+  --color-pixel-floor-dark: #b88e6a;
+  --color-pixel-wall: #f5e8d4;
 
   --color-bg-parchment: #faf7f2;
   --color-bg-sidebar: #f3ede3;
@@ -164,6 +172,144 @@
   animation-play-state: paused;
 }
 
+@keyframes pixel-blink {
+  0%, 92%, 100% { opacity: 1; }
+  94%, 98% { opacity: 0; }
+}
+
+@keyframes z-float {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(6px, -10px); opacity: 0; }
+}
+
+@keyframes tail-twitch {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  93%           { transform: rotate(-4deg); }
+  96%           { transform: rotate(4deg); }
+}
+
+@keyframes radar-pulse {
+  0%   { transform: scale(0.4); opacity: 0.9; }
+  100% { transform: scale(2.0); opacity: 0; }
+}
+
+@keyframes scanline {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 4px; }
+}
+
+.font-pixel {
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  letter-spacing: 0;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  font-smooth: never;
+}
+
+.font-pixel-mono {
+  font-family: var(--font-pixel-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: none;
+}
+
+.pixel-render { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* chunky 4-tone outset border — outer dark, then mid, then light highlight */
+.pixel-frame {
+  position: relative;
+  border: 2px solid var(--pixel-frame-color, #3d3530);
+  box-shadow:
+    inset 2px 2px 0 0 var(--pixel-frame-light, rgba(255,255,255,0.6)),
+    inset -2px -2px 0 0 var(--pixel-frame-shadow, rgba(0,0,0,0.18)),
+    4px 4px 0 0 var(--pixel-frame-drop, rgba(61,53,48,0.18));
+  border-radius: 0;
+}
+
+.pixel-frame-tight {
+  border: 2px solid var(--pixel-frame-color, #3d3530);
+  box-shadow:
+    inset 2px 2px 0 0 var(--pixel-frame-light, rgba(255,255,255,0.55)),
+    inset -2px -2px 0 0 var(--pixel-frame-shadow, rgba(0,0,0,0.15));
+  border-radius: 0;
+}
+
+.pixel-inset {
+  border: 2px solid #3d3530;
+  box-shadow:
+    inset 2px 2px 0 0 rgba(0,0,0,0.18),
+    inset -2px -2px 0 0 rgba(255,255,255,0.55);
+  border-radius: 0;
+}
+
+.pixel-corners::before,
+.pixel-corners::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--pixel-corner-color, #3d3530);
+  pointer-events: none;
+}
+.pixel-corners::before { top: -3px; left: -3px; }
+.pixel-corners::after { bottom: -3px; right: -3px; }
+
+.scanlines {
+  position: relative;
+}
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.06) 0px,
+    rgba(0, 0, 0, 0.06) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+.crt-glow {
+  box-shadow:
+    inset 0 0 12px rgba(126, 200, 212, 0.18),
+    0 0 0 2px rgba(0, 0, 0, 0.7),
+    0 0 0 4px rgba(168, 197, 160, 0.35);
+}
+
+.dotted-pixel-bg {
+  background-image: radial-gradient(circle, rgba(61,53,48,0.15) 1px, transparent 1.6px);
+  background-size: 8px 8px;
+}
+
+.checker-bg {
+  background-image:
+    linear-gradient(45deg, rgba(61,53,48,0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(61,53,48,0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(61,53,48,0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(61,53,48,0.05) 75%);
+  background-size: 12px 12px;
+  background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+}
+
+.pixel-z {
+  animation: z-float 2.4s ease-out infinite;
+}
+
+.pixel-blink {
+  animation: pixel-blink 6s ease-in-out infinite;
+}
+
+.tail-twitch {
+  transform-origin: bottom left;
+  animation: tail-twitch 4.2s ease-in-out infinite;
+}
+
+.radar-ring {
+  animation: radar-pulse 1.8s ease-out infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -174,4 +320,5 @@
   html {
     @apply font-sans;
   }
+  svg.pixel { image-rendering: pixelated; image-rendering: crisp-edges; shape-rendering: crispEdges; }
 }

@@ -1,15 +1,20 @@
 import type { AgentInfo } from "@/lib/agents/registry";
-import type { PresenceState } from "@/lib/agents/presence";
-import { AgentSprite } from "./agent-sprite";
+import type { PresenceState, AgentStatus } from "@/lib/agents/presence";
+import { RoomScene } from "./sprites/room-scene";
+import { PixelDot } from "@/components/pixel/pixel-badge";
 
-// Emoji props per agent, matching the registry description
-const AGENT_PROP_EMOJI: Record<string, string> = {
-  ohara: "📚",
-  nyssa: "🧮",
-  picasso: "🎨",
-  "dear-diary": "📅",
-  sonic: "🔭",
-  alyvis: "💻",
+const STATUS_LABEL: Record<AgentStatus, string> = {
+  active: "ACTIVE",
+  standby: "STANDBY",
+  idle: "ASLEEP",
+  error: "FAULT",
+};
+
+const STATUS_DOT: Record<AgentStatus, string> = {
+  active: "#7ec8d4",
+  standby: "#e8c97a",
+  idle: "#a8c5a0",
+  error: "#f2a7b8",
 };
 
 interface RoomProps {
@@ -19,69 +24,60 @@ interface RoomProps {
 
 export function Room({ agent, presence }: RoomProps) {
   const { status } = presence;
-  const propEmoji = AGENT_PROP_EMOJI[agent.id] ?? "📦";
-
-  // 12% alpha hex tint for the room background
-  const bgColor = agent.accentColor + "1F";
-
-  // Position the sprite based on status
-  const isAtDesk = status === "active" || status === "error";
-  const isInBed = status === "idle";
+  const accent = agent.accentColor;
 
   return (
-    <div
-      className="relative border-2 rounded-lg p-2 min-h-32 flex flex-col"
-      style={{ borderColor: agent.accentColor, backgroundColor: bgColor }}
+    <article
+      className="pixel-frame relative bg-bg-card overflow-hidden flex flex-col"
+      style={{
+        ["--pixel-frame-color" as string]: accent,
+        ["--pixel-frame-shadow" as string]: `${accent}66`,
+      }}
+      aria-label={`${agent.name}'s room`}
     >
-      {/* Room label — top left */}
-      <span className="text-xs uppercase tracking-wider text-text-secondary font-semibold z-10">
-        {agent.name}
-      </span>
-
-      {/* Agent prop — top right */}
-      <span
-        className="absolute top-2 right-2 text-base leading-none select-none"
-        aria-label={`${agent.name}'s prop`}
+      {/* Status header bar */}
+      <header
+        className="flex items-center justify-between px-3 py-2 border-b-2"
+        style={{ borderColor: accent, backgroundColor: `${accent}22` }}
       >
-        {propEmoji}
-      </span>
-
-      {/* Cat bed — bottom left */}
-      <div className="absolute bottom-2 left-2 flex items-center gap-1">
-        <span className="text-base leading-none select-none" aria-label="cat bed">
-          🛏️
-        </span>
-        {/* Z floats when idle/in bed */}
-        {isInBed && (
-          <span className="text-xs text-text-muted animate-pulse select-none" aria-hidden="true">
-            Z
-          </span>
-        )}
-      </div>
-
-      {/* Agent sprite — positioned by status */}
-      <div
-        className={`absolute ${isAtDesk ? "bottom-2 right-2" : isInBed ? "bottom-2 left-8" : "bottom-6 right-6"}`}
-        aria-label={`${agent.name} is ${status}`}
-      >
-        <AgentSprite agent={agent} status={status} />
-      </div>
-
-      {/* Desk indicator when active/error */}
-      {isAtDesk && (
-        <div
-          className="absolute bottom-2 right-10 text-xs text-text-muted select-none"
-          aria-hidden="true"
+        <span
+          className="font-pixel text-[9px] uppercase tracking-widest"
+          style={{ color: "#3d3530" }}
         >
-          🖥️
-        </div>
-      )}
+          {agent.name}
+        </span>
+        <span className="inline-flex items-center gap-1.5 font-pixel text-[7px] uppercase tracking-wider text-text-secondary">
+          <PixelDot color={STATUS_DOT[status]} />
+          {STATUS_LABEL[status]}
+        </span>
+      </header>
 
-      {/* Role label — bottom center */}
-      <div className="flex-1" />
-      <span className="text-xs text-text-muted mt-auto pr-8 pb-0 truncate" title={agent.role}>
-        {agent.role}
-      </span>
-    </div>
+      {/* Room scene */}
+      <div className="relative bg-[#faf3e6]">
+        <RoomScene agent={agent} status={status} />
+      </div>
+
+      {/* Role footer */}
+      <footer className="px-3 py-1.5 border-t border-border-warm flex items-center justify-between">
+        <span className="font-mono text-[10px] text-text-secondary truncate">
+          {agent.role}
+        </span>
+        <span className="font-pixel text-[7px] tracking-wider text-text-muted uppercase">
+          rm.0{agentRoomNumber(agent.id)}
+        </span>
+      </footer>
+    </article>
   );
+}
+
+function agentRoomNumber(id: string): string {
+  switch (id) {
+    case "alyvis": return "1";
+    case "ohara": return "2";
+    case "nyssa": return "3";
+    case "sonic": return "4";
+    case "picasso": return "5";
+    case "dear-diary": return "6";
+    default: return "0";
+  }
 }
