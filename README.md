@@ -1,4 +1,4 @@
-# CATBASE / Mission Control
+# Multi-agent OpenClaw / Mission Control
 
 A locally-hosted Next.js dashboard that visualises the live state of an OpenClaw-managed agent crew. It runs on a Linux VPS alongside the OpenClaw instance and connects to the gateway over a local WebSocket.
 
@@ -18,7 +18,7 @@ Use this when you do not have OpenClaw running on your local machine.
 
 ```bash
 git clone <repo-url>
-cd catbase-openclaw-dashboard
+cd multiagent-openclaw-dashboard
 cp .env.example .env.local
 # Open .env.local and set OPENCLAW_STUB=1
 npm install
@@ -147,7 +147,7 @@ The dashboard is designed to run on the same host as OpenClaw, where the gateway
    ```bash
    npm install --omit=dev
    ```
-2. Create `/etc/catbase/.env` (or equivalent) with production values and symlink / source it as `.env.local` in the project root.
+2. Create `/etc/multiagentdb/.env` (or equivalent) with production values and symlink / source it as `.env.local` in the project root.
 3. Build and start:
    ```bash
    npm run build && npm start
@@ -155,10 +155,10 @@ The dashboard is designed to run on the same host as OpenClaw, where the gateway
 4. For process management, wrap `npm start` with `pm2`, `systemd`, or your preferred supervisor. Example systemd unit:
    ```ini
    [Service]
-   WorkingDirectory=/opt/catbase-openclaw-dashboard
+   WorkingDirectory=/opt/multiagent-openclaw-dashboard
    ExecStart=/usr/bin/npm start
    Restart=always
-   EnvironmentFile=/etc/catbase/env
+   EnvironmentFile=/etc/multiagentdb/env
    ```
 
 The server binds to `0.0.0.0:3000` by default. Proxy through nginx with TLS for external access.
